@@ -1,6 +1,5 @@
 package sole.memory.generateWorld;
 
-
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;

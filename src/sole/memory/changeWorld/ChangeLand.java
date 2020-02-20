@@ -38,8 +38,10 @@ public final  class ChangeLand{
 
        for (double xs=x1+1 ; xs<x2;xs++){
            for (double zx=z1+1;zx<z2;zx++ ){
-               for (int ys=0; ys < 100;ys++){
-                    if( ys > 1 && ys <10){
+               for (int ys=0; ys < 256;ys++){
+				   if(ys == 0){
+						levels.setBlockIdAt((int)xs,ys,(int)zx, Block.BEDROCK);
+				   }else if( ys > 0 && ys <10){
                         levels.setBlock(new Vector3((int)xs,ys,(int)zx), Block.get(getBlockInfo(LAND_BLOCK,true),getBlockInfo(LAND_BLOCK,false)));
                    }else{
                         levels.setBlockIdAt((int)xs,ys,(int)zx, Block.AIR);

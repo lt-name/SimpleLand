@@ -5,11 +5,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.utils.TextFormat;
-import money.Money;
+import me.onebone.economyapi.EconomyAPI;
 import sole.memory.SimpleLand;
 import sole.memory.changeWorld.ChangeLand;
 
@@ -57,9 +58,9 @@ public class ListenerEvent extends SimpleLand implements Listener {
                 }
                 if (land.isOwner(player, id)) {
                     if (land.getLandCount(player) == 1) {
-                        player.sendMessage(TextFormat.AQUA + "[SimpleLand] 成功删除编号为" + id + "的地皮，此地皮为领取地皮，无法获得金币");
+                        player.sendMessage(TextFormat.AQUA + "[SimpleLand] 成功删除编号为" + id + "的地皮，此地皮为免费领取的地皮，无法获得金币");
                     } else {
-                        Money.getInstance().addMoney(player, prices / 2);
+                        EconomyAPI.getInstance().addMoney(player, prices / 2,true);
                         player.sendMessage(TextFormat.AQUA + "[SimpleLand] 成功删除编号为" + id + "的地皮，售出价格为" + prices / 2);
                     }
                     ChangeLand s = new ChangeLand();
@@ -90,8 +91,8 @@ public class ListenerEvent extends SimpleLand implements Listener {
         if (!land.isAdmin(player.getName().toLowerCase())) {
             if (!land.isOwner(player, block)) {
                 if (!land.isGuest(player, block)) {
-                    player.sendTip(TextFormat.RED + "你没有破坏权限");
                     event.setCancelled();
+                    player.sendTip(TextFormat.RED + "你没有权限");
                 }
 
             }
@@ -112,19 +113,16 @@ public class ListenerEvent extends SimpleLand implements Listener {
         }
     }
 
-
     @EventHandler
     public void PlayerInteract(PlayerInteractEvent event) {
+		Block block = event.getBlock();
         Player player = event.getPlayer();
-        Block block = event.getBlock();
         float price = Float.valueOf(land.getConfig().getString("price", "20000"));
         if (!land.isLandWord(event.getPlayer().getLevel().getFolderName())) {
-            System.out.printf("1");
             return;
         }
         String id = (int) block.x + "-" + (int) block.z + "-" + block.getLevel().getFolderName();
         if (land.isLandBlock(block, land.getWorldType(block))) {
-            System.out.printf("2");
             if (land.isBuyLand(id)) {
                 event.setCancelled();
                 player.sendMessage(TextFormat.BLUE + "[SimpleLand] 此领地已经有主人了！！");
@@ -143,14 +141,14 @@ public class ListenerEvent extends SimpleLand implements Listener {
                         return;
                     }
                 }
-                float money = Money.getInstance().getMoney(player);
+                float money = (float) EconomyAPI.getInstance().myMoney(player);
                 if (money < price) {
                     player.sendMessage(TextFormat.BLUE + "[SimpleLand] 你的金币不足！！");
                 } else {
                     /*
-                     * 经济核心调用 @Him188 的经济核心
+                     * 经济核心调用 EconomyAPI
                      * */
-                    Money.getInstance().reduceMoney(player, price);
+                    EconomyAPI.getInstance().reduceMoney(player, price,true);
                     land.createNewLand(block, player, land.getWorldType(block));
                     player.sendMessage(TextFormat.BLUE + "[SimpleLand] 成功购买此地皮，花费" + price + "金币");
                 }
@@ -158,11 +156,32 @@ public class ListenerEvent extends SimpleLand implements Listener {
                 return;
             }
         }
+
+    }
+
+    @EventHandler
+    public void onInt(PlayerInteractEvent event){
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
         if (!land.isAdmin(player.getName().toLowerCase())) {
             if (!land.isOwner(player, block)) {
                 if (!land.isGuest(player, block)) {
-                    player.sendTip(TextFormat.RED + "你没有权限");
                     event.setCancelled();
+                    player.sendTip(TextFormat.RED + "你没有权限");
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event){
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        if (!land.isAdmin(player.getName().toLowerCase())) {
+            if (!land.isOwner(player, block)) {
+                if (!land.isGuest(player, block)) {
+                    event.setCancelled();
+                    player.sendTip(TextFormat.RED + "你没有权限");
                 }
             }
         }

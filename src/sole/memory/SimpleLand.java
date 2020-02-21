@@ -616,7 +616,7 @@ public class SimpleLand extends PluginBase implements Listener {
                             sender.sendMessage(TextFormat.YELLOW + " /land myland " + TextFormat.AQUA + "我的地皮列表");
                             sender.sendMessage(TextFormat.YELLOW + " /land tp <地皮名字> " + TextFormat.AQUA + "tp到地皮名字为<地皮名字>的地皮");
                             sender.sendMessage(TextFormat.YELLOW + " /land tp <玩家> <地皮名字> " + TextFormat.AQUA + "管理员tp到<玩家>地皮名字为<地皮名字>的地皮");
-                            //sender.sendMessage(TextFormat.YELLOW + " /land giveland <玩家> " + TextFormat.AQUA + "把地皮给一个玩家，管理员无视权限");
+                            sender.sendMessage(TextFormat.YELLOW + " /land giveland <玩家> " + TextFormat.AQUA + "把地皮给一个玩家，管理员无视权限");
                             sender.sendMessage(TextFormat.YELLOW + " /land setname <名字> " + TextFormat.AQUA + "更改地皮名字");
                             sender.sendMessage(TextFormat.YELLOW + " /land land <玩家> " + TextFormat.AQUA + "查询此玩家的地皮");
                             sender.sendMessage(TextFormat.YELLOW + " /land found " + TextFormat.AQUA + "自动寻找附近的空地皮，然后传送");
@@ -659,17 +659,12 @@ public class SimpleLand extends PluginBase implements Listener {
                             }
                         case "add":
                             if(!sender.isPlayer()){
-                                // if(!isAdmin(sender.getName().toLowerCase())){
-                                    // sender.sendMessage(TextFormat.RED+"WARNING 你不是管理员，请勿执行此命令");
-                                    // return true;
-                                // }else {
-                                    if (args.length > 2) {
-                                        addWorld(args[1],Integer.parseInt(args[2]));
-                                        sender.sendMessage(TextFormat.RED + "成功创建地皮世界 " + args[1]);
-                                    }else{
-                                        sender.sendMessage(TextFormat.RED + "WARNING 请输入世界名字和世界类型 <1|2>");
-                                    }
-                                //}
+                                if (args.length > 2) {
+                                    addWorld(args[1],Integer.parseInt(args[2]));
+                                    sender.sendMessage(TextFormat.RED + "成功创建地皮世界 " + args[1]);
+                                }else{
+                                    sender.sendMessage(TextFormat.RED + "WARNING 请输入世界名字和世界类型 <1|2>");
+                                }
                             }else{
 								sender.sendMessage(TextFormat.RED+"请在后台运行此命令");
 							}
@@ -738,7 +733,7 @@ public class SimpleLand extends PluginBase implements Listener {
                                 return true;
                             }
                             break;
-/*                         case "giveland":
+                         case "giveland":
                             if (sender instanceof Player) {
                                 if(args.length > 1){
                                     if (isLandWord(((Player) sender).getLevel().getName())) {
@@ -757,10 +752,14 @@ public class SimpleLand extends PluginBase implements Listener {
                                             return true;
                                         }
                                         if(isOwner((Player) sender)){
-                                            if(setLandOwnerChange((Player) sender,args[1],getLand((Player) sender))) {
-                                                sender.sendMessage(TextFormat.AQUA + "[SimpleLand] 赠送地皮给玩家" + args[1]);
+                                            if(getLandCount((Player) sender)>1){
+                                                if(setLandOwnerChange((Player) sender,args[1],getLand((Player) sender))) {
+                                                    sender.sendMessage(TextFormat.AQUA + "[SimpleLand] 赠送地皮给玩家" + args[1]);
+                                                }else {
+                                                    sender.sendMessage(TextFormat.AQUA + "[SimpleLand] 无法赠送地皮给玩家，该玩家地皮已经上限");
+                                                }
                                             }else {
-                                                sender.sendMessage(TextFormat.AQUA + "[SimpleLand] 无法赠送地皮给玩家，该玩家地皮已经上限");
+                                                sender.sendMessage(TextFormat.AQUA+"[SimpleLand] 免费领取的地皮无法赠送");
                                             }
                                         }else {
                                             sender.sendMessage(TextFormat.AQUA+"[SimpleLand] 这不是你的领地");
@@ -775,7 +774,7 @@ public class SimpleLand extends PluginBase implements Listener {
                                 sender.sendMessage(TextFormat.RED + "[SimpleLand] 请在游戏中运行此命令");
                                 return true;
                             }
-                            break; */
+                            break;
                         case  "setname":
                             if (sender instanceof Player) {
                                 if(args.length > 1){

@@ -156,13 +156,6 @@ public class ListenerEvent extends SimpleLand implements Listener {
                 return;
             }
         }
-
-    }
-
-    @EventHandler
-    public void onInt(PlayerInteractEvent event){
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
         if (!land.isAdmin(player.getName().toLowerCase())) {
             if (!land.isOwner(player, block)) {
                 if (!land.isGuest(player, block)) {
@@ -177,6 +170,9 @@ public class ListenerEvent extends SimpleLand implements Listener {
     public void onPlace(BlockPlaceEvent event){
         Player player = event.getPlayer();
         Block block = event.getBlock();
+        if(!isLandWord(event.getPlayer().getLevel().getFolderName())){
+            return;
+        }
         if (!land.isAdmin(player.getName().toLowerCase())) {
             if (!land.isOwner(player, block)) {
                 if (!land.isGuest(player, block)) {
